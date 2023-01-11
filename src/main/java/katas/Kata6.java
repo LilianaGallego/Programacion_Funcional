@@ -13,7 +13,9 @@ import java.util.List;
 public class Kata6 {
     public static String execute() {
         List<Movie> movies = DataUtil.getMovies();
-
-        return "someUrl";
+        String majorUri = movies.stream()
+                .map(movie -> movie.getUri())
+                .reduce("", ((uri_1, uri_2) -> uri_1.length()> uri_2.length()? uri_1:uri_2));
+        return majorUri;
     }
 }
