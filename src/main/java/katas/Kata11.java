@@ -2,10 +2,12 @@ package katas;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import model.BoxArt;
 import util.DataUtil;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
     Goal: Create a datastructure from the given data:
@@ -63,8 +65,27 @@ public class Kata11 {
         List<Map> boxArts = DataUtil.getBoxArts();
         List<Map> bookmarkList = DataUtil.getBookmarkList();
 
-        return ImmutableList.of(ImmutableMap.of("name", "someName", "videos", ImmutableList.of(
-                ImmutableMap.of("id", 5, "title", "The Chamber", "time", 123, "boxart", "someUrl")
-        )));
+        List<Map> datas = lists.stream()
+                .map(l->ImmutableMap.of("name",l.get("name"),"videos",
+                        videos.stream()
+                                .filter(v->v.get("listId").equals(l.get("id")))
+                                .map(m->ImmutableMap.of("id",m.get("id"),"title",m.get("title"),"time",
+                                        bookmarkList.stream()
+                                                .filter(b->b.get("videoId").equals(m.get("id")))
+                                                .map(b->b.get("time")).findFirst(),"boxArt",boxArts.stream()
+                                                .filter(box->box.get("videoId").equals(m.get("id")))
+                                                .reduce((min, box) -> {
+                                                    //System.out.println(min.get("width"));
+                                                    int minSize = (Integer) min.get("width") *(Integer) min.get("height");
+                                                    int boxSize = (Integer) box.get("width") *(Integer) box.get("height");
+                                                    return (boxSize < minSize) ? box : min;
+                                                }).map(box->box.get("url"))
+
+                                ))
+                                .collect(Collectors.toList())))
+                .collect(Collectors.toList());
+
+        datas.forEach(System.out::println);
+        return datas;
     }
 }
