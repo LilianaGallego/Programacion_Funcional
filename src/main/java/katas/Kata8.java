@@ -29,7 +29,7 @@ public class Kata8 {
                 .map(Bookmark::getId);
 
         List<Map> moviesCombined = StreamUtils.zip(moviesList,bookMarksList,
-                (m,b)-> ImmutableMap.of("idMovi", m, "idBookMark", b))
+                (m,b)-> ImmutableMap.of("videoId", m, "bookmarkId", b))
                         .collect(Collectors.toList());
 
         return moviesCombined;
